@@ -1352,6 +1352,11 @@ namespace osu.Framework.Graphics.Rendering
 
         public abstract Mesh ImportMesh(Assimp.Mesh mesh);
 
+        public void DrawMesh(Mesh mesh)
+        {
+            throw new NotImplementedException();
+        }
+
         #endregion
 
         private class PassthroughShaderStore : IShaderStore

@@ -254,5 +254,10 @@ namespace osu.Framework.Graphics.Rendering.Dummy
         {
             throw new NotImplementedException();
         }
+
+        public void DrawMesh(Mesh mesh)
+        {
+            throw new NotImplementedException();
+        }
     }
 }
