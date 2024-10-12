@@ -138,5 +138,68 @@ namespace osu.Framework.Graphics.Rendering.Dummy
 
         public override IFrameBuffer CreateFrameBuffer(RenderBufferFormat[]? renderBufferFormats = null, TextureFilteringMode filteringMode = TextureFilteringMode.Linear)
             => new DummyFrameBuffer(this);
+            
+        public Texture CreateTexture(int width, int height, bool manualMipmaps = false, TextureFilteringMode filteringMode = TextureFilteringMode.Linear, WrapMode wrapModeS = WrapMode.None,
+                                     WrapMode wrapModeT = WrapMode.None, Color4? initialisationColour = null)
+            => new Texture(new DummyNativeTexture(this) { Width = width, Height = height }, wrapModeS, wrapModeT);
+
+        public Texture CreateVideoTexture(int width, int height)
+            => CreateTexture(width, height);
+
+        public IVertexBatch<TVertex> CreateLinearBatch<TVertex>(int size, int maxBuffers, PrimitiveTopology topology) where TVertex : unmanaged, IEquatable<TVertex>, IVertex
+            => new DummyVertexBatch<TVertex>();
+
+        public IVertexBatch<TVertex> CreateQuadBatch<TVertex>(int size, int maxBuffers) where TVertex : unmanaged, IEquatable<TVertex>, IVertex
+            => new DummyVertexBatch<TVertex>();
+
+        public IUniformBuffer<TData> CreateUniformBuffer<TData>() where TData : unmanaged, IEquatable<TData>
+            => new DummyUniformBuffer<TData>();
+
+        public IShaderStorageBufferObject<TData> CreateShaderStorageBufferObject<TData>(int uboSize, int ssboSize) where TData : unmanaged, IEquatable<TData>
+            => new DummyShaderStorageBufferObject<TData>(ssboSize);
+
+        void IRenderer.SetUniform<T>(IUniformWithValue<T> uniform)
+        {
+        }
+
+        IVertexBatch<TexturedVertex2D> IRenderer.DefaultQuadBatch => new DummyVertexBatch<TexturedVertex2D>();
+
+        void IRenderer.PushQuadBatch(IVertexBatch<TexturedVertex2D> quadBatch)
+        {
+        }
+
+        void IRenderer.PopQuadBatch()
+        {
+        }
+
+        event Action<Texture>? IRenderer.TextureCreated
+        {
+            add
+            {
+            }
+            remove
+            {
+            }
+        }
+
+        Texture[] IRenderer.GetAllTextures() => Array.Empty<Texture>();
+
+        public void SetActiveBatch(IVertexBatch batch)
+        {
+        }
+
+        public void DrawVertices(PrimitiveTopology topology, int vertexStart, int verticesCount)
+        {
+        }
+
+        public Mesh ImportMesh(Assimp.Mesh mesh)
+        {
+            throw new NotImplementedException();
+        }
+
+        public void DrawMesh(Mesh mesh)
+        {
+            throw new NotImplementedException();
+        }
     }
 }
