@@ -94,11 +94,11 @@ namespace osu.Framework.Platform.SDL3
                 switch (RuntimeInfo.OS)
                 {
                     case RuntimeInfo.Platform.Windows:
-                        return SDL_GetProperty(props, SDL_PROP_WINDOW_WIN32_HWND_POINTER, IntPtr.Zero);
+                        return SDL_GetPointerProperty(props, SDL_PROP_WINDOW_WIN32_HWND_POINTER, IntPtr.Zero);
 
                     case RuntimeInfo.Platform.Linux:
                         if (IsWayland)
-                            return SDL_GetProperty(props, SDL_PROP_WINDOW_WAYLAND_SURFACE_POINTER, IntPtr.Zero);
+                            return SDL_GetPointerProperty(props, SDL_PROP_WINDOW_WAYLAND_SURFACE_POINTER, IntPtr.Zero);
 
                         if (SDL_GetCurrentVideoDriver() == "x11")
                             return new IntPtr(SDL_GetNumberProperty(props, SDL_PROP_WINDOW_X11_WINDOW_NUMBER, 0));
@@ -106,13 +106,13 @@ namespace osu.Framework.Platform.SDL3
                         return IntPtr.Zero;
 
                     case RuntimeInfo.Platform.macOS:
-                        return SDL_GetProperty(props, SDL_PROP_WINDOW_COCOA_WINDOW_POINTER, IntPtr.Zero);
+                        return SDL_GetPointerProperty(props, SDL_PROP_WINDOW_COCOA_WINDOW_POINTER, IntPtr.Zero);
 
                     case RuntimeInfo.Platform.iOS:
-                        return SDL_GetProperty(props, SDL_PROP_WINDOW_UIKIT_WINDOW_POINTER, IntPtr.Zero);
+                        return SDL_GetPointerProperty(props, SDL_PROP_WINDOW_UIKIT_WINDOW_POINTER, IntPtr.Zero);
 
                     case RuntimeInfo.Platform.Android:
-                        return SDL_GetProperty(props, SDL_PROP_WINDOW_ANDROID_WINDOW_POINTER, IntPtr.Zero);
+                        return SDL_GetPointerProperty(props, SDL_PROP_WINDOW_ANDROID_WINDOW_POINTER, IntPtr.Zero);
 
                     default:
                         throw new ArgumentOutOfRangeException();
@@ -131,10 +131,10 @@ namespace osu.Framework.Platform.SDL3
                 var props = SDL_GetWindowProperties(SDLWindowHandle);
 
                 if (IsWayland)
-                    return SDL_GetProperty(props, SDL_PROP_WINDOW_WAYLAND_DISPLAY_POINTER, IntPtr.Zero);
+                    return SDL_GetPointerProperty(props, SDL_PROP_WINDOW_WAYLAND_DISPLAY_POINTER, IntPtr.Zero);
 
                 if (SDL_GetCurrentVideoDriver() == "x11")
-                    return SDL_GetProperty(props, SDL_PROP_WINDOW_X11_DISPLAY_POINTER, IntPtr.Zero);
+                    return SDL_GetPointerProperty(props, SDL_PROP_WINDOW_X11_DISPLAY_POINTER, IntPtr.Zero);
 
                 return IntPtr.Zero;
             }
@@ -156,7 +156,7 @@ namespace osu.Framework.Platform.SDL3
 
             SDL_SetHint(SDL_HINT_APP_NAME, appName);
 
-            if (SDL_Init(SDL_InitFlags.SDL_INIT_VIDEO | SDL_InitFlags.SDL_INIT_GAMEPAD) < 0)
+            if (SDL_Init(SDL_InitFlags.SDL_INIT_VIDEO | SDL_InitFlags.SDL_INIT_GAMEPAD) == SDL_bool.SDL_FALSE)
             {
                 throw new InvalidOperationException($"Failed to initialise SDL: {SDL_GetError()}");
             }
@@ -204,20 +204,20 @@ namespace osu.Framework.Platform.SDL3
             flags |= graphicsSurface.Type.ToFlags();
 
             SDL_SetHint(SDL_HINT_WINDOWS_CLOSE_ON_ALT_F4, "0"u8);
-            SDL_SetHint(SDL_HINT_IME_SHOW_UI, "1"u8);
+            SDL_SetHint(SDL_HINT_IME_IMPLEMENTED_UI, "0"u8);
             SDL_SetHint(SDL_HINT_MOUSE_RELATIVE_MODE_CENTER, "0"u8);
             SDL_SetHint(SDL_HINT_TOUCH_MOUSE_EVENTS, "0"u8); // disable touch events generating synthetic mouse events on desktop platforms
             SDL_SetHint(SDL_HINT_MOUSE_TOUCH_EVENTS, "0"u8); // disable mouse events generating synthetic touch events on mobile platforms
-
-            // we want text input to only be active when SDL3DesktopWindowTextInput is active.
-            // SDL activates it by default on some platforms: https://github.com/libsdl-org/SDL/blob/release-2.0.16/src/video/SDL_video.c#L573-L582
-            // so we deactivate it on startup.
-            SDL_StopTextInput();
 
             SDLWindowHandle = SDL_CreateWindow(title, Size.Width, Size.Height, flags);
 
             if (SDLWindowHandle == null)
                 throw new InvalidOperationException($"Failed to create SDL window. SDL Error: {SDL_GetError()}");
+
+            // we want text input to only be active when SDL3DesktopWindowTextInput is active.
+            // SDL activates it by default on some platforms: https://github.com/libsdl-org/SDL/blob/release-2.0.16/src/video/SDL_video.c#L573-L582
+            // so we deactivate it on startup.
+            SDL_StopTextInput(SDLWindowHandle);
 
             graphicsSurface.Initialise();
 
@@ -320,23 +320,23 @@ namespace osu.Framework.Platform.SDL3
         }
 
         [UnmanagedCallersOnly(CallConvs = new[] { typeof(CallConvCdecl) })]
-        private static int eventFilter(IntPtr userdata, SDL_Event* eventPtr)
+        private static SDL_bool eventFilter(IntPtr userdata, SDL_Event* eventPtr)
         {
             var handle = new ObjectHandle<SDL3Window>(userdata);
             if (handle.GetTarget(out SDL3Window window))
                 window.HandleEventFromFilter(*eventPtr);
 
-            return 1;
+            return SDL_bool.SDL_TRUE;
         }
 
         [UnmanagedCallersOnly(CallConvs = new[] { typeof(CallConvCdecl) })]
-        private static int eventWatch(IntPtr userdata, SDL_Event* eventPtr)
+        private static SDL_bool eventWatch(IntPtr userdata, SDL_Event* eventPtr)
         {
             var handle = new ObjectHandle<SDL3Window>(userdata);
             if (handle.GetTarget(out SDL3Window window))
                 window.HandleEventFromWatch(*eventPtr);
 
-            return 1;
+            return SDL_bool.SDL_TRUE;
         }
 
         private bool firstDraw = true;
@@ -432,8 +432,8 @@ namespace osu.Framework.Platform.SDL3
 
                 fixed (Rgba32* ptr = pixelSpan)
                 {
-                    var pixelFormat = SDL_GetPixelFormatEnumForMasks(32, 0xff, 0xff00, 0xff0000, 0xff000000);
-                    surface = SDL_CreateSurfaceFrom(new IntPtr(ptr), imageSize.Width, imageSize.Height, imageSize.Width * 4, pixelFormat);
+                    var pixelFormat = SDL_GetPixelFormatForMasks(32, 0xff, 0xff00, 0xff0000, 0xff000000);
+                    surface = SDL_CreateSurfaceFrom(imageSize.Width, imageSize.Height, pixelFormat, new IntPtr(ptr), imageSize.Width * 4);
                 }
 
                 SDL_SetWindowIcon(SDLWindowHandle, surface);
@@ -572,6 +572,20 @@ namespace osu.Framework.Platform.SDL3
                 case SDL_EventType.SDL_EVENT_DROP_BEGIN:
                 case SDL_EventType.SDL_EVENT_DROP_COMPLETE:
                     handleDropEvent(e.drop);
+                    break;
+
+                case SDL_EventType.SDL_EVENT_PEN_DOWN:
+                case SDL_EventType.SDL_EVENT_PEN_UP:
+                    handlePenTouchEvent(e.ptouch);
+                    break;
+
+                case SDL_EventType.SDL_EVENT_PEN_BUTTON_DOWN:
+                case SDL_EventType.SDL_EVENT_PEN_BUTTON_UP:
+                    handlePenButtonEvent(e.pbutton);
+                    break;
+
+                case SDL_EventType.SDL_EVENT_PEN_MOTION:
+                    handlePenMotionEvent(e.pmotion);
                     break;
             }
         }
