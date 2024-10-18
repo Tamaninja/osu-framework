@@ -23,7 +23,6 @@ namespace osu.Framework.Graphics.Veldrid.Vertices
         /// The stride of the vertex of type <typeparamref name="T"/>.
         /// </summary>
         public static readonly int STRIDE = Marshal.SizeOf(default(T));
-
         public static VertexLayoutDescription Layout { get; }
 
         private static readonly List<VertexElementDescription> elements = new List<VertexElementDescription>();

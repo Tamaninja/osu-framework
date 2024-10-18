@@ -1,16 +1,13 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Diagnostics.CodeAnalysis;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+using System.Runtime.InteropServices;
 using Assimp;
-using osuTK.Graphics;
 using osuTK.Graphics.ES30;
 
 namespace osu.Framework.Graphics.Rendering.Vertices
 {
-    public struct TexturedMeshVertex : IMeshVertex<TexturedMeshVertex>
+    [StructLayout(LayoutKind.Sequential)]
+
+    public struct TexturedMeshVertex : IEquatable<TexturedMeshVertex>, IVertex
     {
         [VertexMember(3, VertexAttribPointerType.Float)]
         public Vector3D Position;
@@ -18,24 +15,12 @@ namespace osu.Framework.Graphics.Rendering.Vertices
         [VertexMember(3, VertexAttribPointerType.Float)]
         public Vector3D TexturePosition;
 
-
-        public static TexturedMeshVertex FromMesh(Mesh mesh, int index)
+        public TexturedMeshVertex(Assimp.Mesh mesh, int index)
         {
-            if (mesh.TextureCoords[0].Count == 0)
-            {
-                return new TexturedMeshVertex
-                {
-                    Position = mesh.Vertices[index],
-                    TexturePosition = new Vector3D(0)
-                };
-            }
-
-            return new TexturedMeshVertex
-            {
-                Position = mesh.Vertices[index],
-                TexturePosition = mesh.TextureCoords[0][index],
-            };
+            Position = mesh.Vertices[index];
+            TexturePosition = mesh.TextureCoordinateChannels[0][index];
         }
+
 
         public bool Equals(TexturedMeshVertex other)
         {

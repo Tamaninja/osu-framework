@@ -3,6 +3,7 @@
 
 using System;
 using System.Diagnostics;
+using Assimp;
 using osu.Framework.Development;
 using osu.Framework.Graphics.Rendering;
 using osu.Framework.Graphics.Rendering.Vertices;
@@ -41,6 +42,19 @@ namespace osu.Framework.Graphics.Veldrid.Buffers
             Size = amountVertices;
         }
 
+        public VeldridVertexBuffer(VeldridRenderer renderer, T[] vertices)
+        {
+            this.renderer = renderer;
+
+            Size = vertices.Length;
+
+            buffer = renderer.Factory.CreateBuffer(new BufferDescription((uint)(Size * VeldridVertexUtils<T>.STRIDE), BufferUsage.VertexBuffer));
+            memoryLease = NativeMemoryTracker.AddMemory(this, buffer.SizeInBytes);
+            renderer.Device.UpdateBuffer(buffer, 0, vertices);
+
+            FrameStatistics.Add(StatisticsCounterType.VerticesUpl, Size);
+        }
+
         /// <summary>
         /// Sets the vertex at a specific index of this <see cref="VeldridVertexBuffer{T}"/>.
         /// </summary>
@@ -71,6 +85,7 @@ namespace osu.Framework.Graphics.Veldrid.Buffers
 
             FrameStatistics.Add(StatisticsCounterType.VerticesUpl, countVertices);
         }
+
 
         private void initialiseGpuBuffer()
         {

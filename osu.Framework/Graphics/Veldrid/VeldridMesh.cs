@@ -2,50 +2,60 @@
 // See the LICENCE file in the repository root for full licence text.
 
 using System;
+using System.Collections.Generic;
+using System.Linq;
 using System.Numerics;
+using System.Runtime.CompilerServices;
 using osu.Framework.Graphics.OpenGL.Buffers;
 using osu.Framework.Graphics.Rendering;
 using osu.Framework.Graphics.Rendering.Vertices;
 using osu.Framework.Graphics.Veldrid.Buffers;
+using osu.Framework.Graphics.Veldrid.Buffers.Staging;
 using osu.Framework.Graphics.Veldrid.Pipelines;
 using osu.Framework.Graphics.Veldrid.Vertices;
+using osu.Framework.Platform;
+using osu.Framework.Statistics;
 using Veldrid;
+using Vulkan;
 
 namespace osu.Framework.Graphics.Veldrid
 {
     internal class VeldridMesh : Mesh
     {
+
         public VeldridIndexBuffer IndexBuffer;
-        public DeviceBuffer VertexBuffer;
+        public VeldridVertexBuffer<TexturedMeshVertex> VertexBuffer;
         private VeldridRenderer renderer;
         public VeldridMesh(VeldridRenderer renderer, Assimp.Mesh mesh) : base(mesh)
         {
             this.renderer = renderer;
 
-            Size = Vertices.Length;
+            TexturedMeshVertex[] vertices = new TexturedMeshVertex[mesh.Vertices.Count];
+            for (int i = 0; i < mesh.Vertices.Count; i++)
+            {
+                vertices[i] = new TexturedMeshVertex(mesh, i);
+            }
 
-            VertexBuffer = renderer.Factory.CreateBuffer(new BufferDescription((uint)(Size * VeldridVertexUtils<TexturedMeshVertex>.STRIDE), BufferUsage.VertexBuffer));
-            renderer.BufferUpdateCommands.UpdateBuffer(VertexBuffer, 0, Vertices);
+            VertexBuffer = new VeldridVertexBuffer<TexturedMeshVertex>(renderer, vertices);
 
-            IndexBuffer = renderer.CreateIndexBuffer(mesh.GetUnsignedIndices());
+            uint[] indices = mesh.GetUnsignedIndices();
 
+            DeviceBuffer indexBuffer = renderer.Factory.CreateBuffer(new BufferDescription((uint)indices.Length * sizeof(uint), BufferUsage.IndexBuffer));
+            renderer.Device.UpdateBuffer(indexBuffer, 0, indices);
+
+            IndexBuffer = new VeldridIndexBuffer(indexBuffer, indices.Length);
 
         }
 
-        public int Size { get; }
 
         public override void Draw()
         {
+            renderer.BindIndexBuffer(IndexBuffer);
+            renderer.BindVertexBuffer(VertexBuffer);
+            renderer.DrawVertices(Rendering.PrimitiveTopology.Triangles, 0, IndexBuffer.Size);
 
-            renderer.DrawMesh(this);
-
-        }
-        public override void Dispose()
-        {
-
-            VertexBuffer.Dispose();
-            IndexBuffer.Dispose();
-            base.Dispose();
+/*            renderer.DrawMesh(this);
+*/
         }
     }
 }

@@ -183,13 +183,6 @@ namespace osu.Framework.Graphics.Veldrid
             where T : unmanaged, IEquatable<T>, IVertex
             => graphicsPipeline.SetVertexBuffer(buffer.Buffer, VeldridVertexUtils<T>.Layout);
 
-        public VeldridIndexBuffer CreateIndexBuffer(uint[] indices)
-        {
-            VeldridIndexBuffer buffer = new VeldridIndexBuffer(bufferUpdatePipeline, indices);
-            return (buffer);
-
-        }
-
         public void BindIndexBuffer(VeldridIndexBuffer buffer)
         {
             graphicsPipeline.SetIndexBuffer(buffer);
@@ -361,10 +354,9 @@ namespace osu.Framework.Graphics.Veldrid
         }
         public void DrawMesh(VeldridMesh mesh)
         {
-            graphicsPipeline.SetIndexBuffer(mesh.IndexBuffer);
-            graphicsPipeline.SetVertexBuffer(mesh.VertexBuffer, VeldridVertexUtils<TexturedMeshVertex>.Layout);
 
-            DrawVertices(PrimitiveTopology.Triangles, 0, mesh.Size);
+            graphicsPipeline.Commands.DrawIndexed((uint)mesh.Indices.Length);
+
         }
     }
 }

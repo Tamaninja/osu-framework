@@ -2,6 +2,7 @@
 // See the LICENCE file in the repository root for full licence text.
 
 using System;
+using System.Linq;
 using osu.Framework.Graphics.Rendering;
 using osu.Framework.Graphics.Veldrid.Pipelines;
 using Veldrid;
@@ -58,13 +59,12 @@ namespace osu.Framework.Graphics.Veldrid.Buffers
             pipeline.Commands.UpdateBuffer(Buffer, 0, indices);
         }
 
-        public VeldridIndexBuffer(BasicPipeline pipeline, uint[] indices)
+        public VeldridIndexBuffer(DeviceBuffer deviceBuffer, int size)
         {
             Format = IndexFormat.UInt32;
-            Size = indices.Length;
+            Size = size;
 
-            Buffer = pipeline.Factory.CreateBuffer(new BufferDescription((uint)indices.Length * sizeof(uint), BufferUsage.IndexBuffer));
-            pipeline.Commands.UpdateBuffer(Buffer, 0, indices);
+            Buffer = deviceBuffer;
         }
 
         public int TranslateToIndex(int vertexIndex)

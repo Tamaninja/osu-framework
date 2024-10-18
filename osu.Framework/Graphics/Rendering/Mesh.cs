@@ -1,5 +1,4 @@
-﻿using System.Collections.Generic;
-using Assimp;
+﻿using Assimp;
 
 namespace osu.Framework.Graphics.Rendering
 {
@@ -10,15 +9,17 @@ namespace osu.Framework.Graphics.Rendering
         public uint[] Indices;
         public string Name;
         public Vector3D[] Vertices;
-        public List<Vector3D>[] TextureCoords;
+        public Vector3D[] TextureCoords;
 
         public Mesh(Assimp.Mesh mesh)
         {
+
             Name = mesh.Name;
             MaterialIndex = mesh.MaterialIndex;
+            TextureCoords = mesh.TextureCoordinateChannels[0].ToArray();
             Vertices = mesh.Vertices.ToArray();
+
             Indices = mesh.GetUnsignedIndices();
-            TextureCoords = mesh.TextureCoordinateChannels;
         }
 
         public virtual void Draw()
@@ -27,7 +28,6 @@ namespace osu.Framework.Graphics.Rendering
         }
         public virtual void Dispose()
         {
-
         }
     }
 }
