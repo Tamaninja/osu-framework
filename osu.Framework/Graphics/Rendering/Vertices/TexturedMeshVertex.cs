@@ -18,6 +18,7 @@ namespace osu.Framework.Graphics.Rendering.Vertices
         public TexturedMeshVertex(Assimp.Mesh mesh, int index)
         {
             Position = mesh.Vertices[index];
+
             TexturePosition = mesh.TextureCoordinateChannels[0][index];
         }
 

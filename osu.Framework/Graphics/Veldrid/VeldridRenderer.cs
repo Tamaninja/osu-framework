@@ -182,7 +182,6 @@ namespace osu.Framework.Graphics.Veldrid
         public void BindVertexBuffer<T>(IVeldridVertexBuffer<T> buffer)
             where T : unmanaged, IEquatable<T>, IVertex
             => graphicsPipeline.SetVertexBuffer(buffer.Buffer, VeldridVertexUtils<T>.Layout);
-
         public void BindIndexBuffer(VeldridIndexBuffer buffer)
         {
             graphicsPipeline.SetIndexBuffer(buffer);

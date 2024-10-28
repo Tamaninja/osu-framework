@@ -19,6 +19,8 @@ namespace osu.Framework.Utils
         /// <param name="toCheck">The <see cref="Vector2"/> to check.</param>
         /// <returns>False if X or Y are Infinity or NaN, true otherwise. </returns>
         public static bool IsFinite(Vector2 toCheck) => float.IsFinite(toCheck.X) && float.IsFinite(toCheck.Y);
+        public static bool IsFinite(Vector3 toCheck) => float.IsFinite(toCheck.X) && float.IsFinite(toCheck.Y) && float.IsFinite(toCheck.Z);
+
 
         /// <summary>
         /// Returns whether the components of a <see cref="MarginPadding"/> are not infinite or NaN.

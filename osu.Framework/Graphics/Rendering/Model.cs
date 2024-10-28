@@ -1,5 +1,6 @@
 ﻿using System.Collections.Generic;
 using Assimp;
+using osu.Framework.Graphics.OpenGL;
 
 namespace osu.Framework.Graphics.Rendering
 {
@@ -26,7 +27,7 @@ namespace osu.Framework.Graphics.Rendering
             {
 
                 Mesh mesh = renderer.ImportMesh(assimpMesh);
-
+                
 
                 Meshes.Add(mesh);
 
@@ -35,11 +36,16 @@ namespace osu.Framework.Graphics.Rendering
 
         public static Model BOX_3D(IRenderer renderer)
         {
-            return new Model(renderer, @"E:\Rocksmeth\supreme-broccoli\TestTest123.Resources\Models\Lighting Mcqueen\LightingMcqueen.obj");
+            return new Model(renderer, @"E:\Rocksmeth\supreme-broccoli\TestTest123.Resources\Models\Trashcan_Small1.fbx");
         }
         public static Model NOTE(IRenderer renderer)
         {
             return new Model(renderer, @"E:\Rocksmeth\supreme-broccoli\TestTest123.Resources\Models\Stone.fbx");
+        }
+
+        public static Model MCQUEEN(IRenderer renderer)
+        {
+            return new Model(renderer, @"E:\Rocksmeth\supreme-broccoli\TestTest123.Resources\Models\Lighting Mcqueen\LightingMcqueen.obj");
         }
     }
 }

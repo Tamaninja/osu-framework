@@ -1,4 +1,7 @@
-﻿using Assimp;
+﻿using System;
+using System.Collections.Generic;
+using Assimp;
+using osu.Framework.Logging;
 
 namespace osu.Framework.Graphics.Rendering
 {
