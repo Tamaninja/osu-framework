@@ -27,7 +27,7 @@ namespace osu.Framework.Graphics.Rendering
             {
 
                 Mesh mesh = renderer.ImportMesh(assimpMesh);
-                
+
 
                 Meshes.Add(mesh);
 
