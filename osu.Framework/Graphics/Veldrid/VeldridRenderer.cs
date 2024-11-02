@@ -349,13 +349,22 @@ namespace osu.Framework.Graphics.Veldrid
 
         public override Mesh ImportMesh(Assimp.Mesh mesh)
         {
-            return (new VeldridMesh(this, mesh));
+
+            if (mesh.HasTextureCoords(0))
+            {
+                return (new VeldridMesh<TexturedMeshVertex>(this, mesh));
+            }
+            else
+            {
+                return (new VeldridMesh<TexturelessMeshVertex>(this, mesh));
+
+            }
         }
-        public void DrawMesh(VeldridMesh mesh)
+/*        public void DrawMesh(VeldridMesh mesh)
         {
 
             graphicsPipeline.Commands.DrawIndexed((uint)mesh.Indices.Length);
 
-        }
+        }*/
     }
 }

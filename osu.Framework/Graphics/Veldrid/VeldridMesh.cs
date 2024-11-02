@@ -22,23 +22,18 @@ using Vulkan;
 
 namespace osu.Framework.Graphics.Veldrid
 {
-    internal class VeldridMesh : Mesh
+    internal class VeldridMesh<T> : Mesh where T : unmanaged, IEquatable<T>, IMeshVertex<T>
     {
 
         public VeldridIndexBuffer IndexBuffer;
-        public VeldridVertexBuffer<TexturedMeshVertex> VertexBuffer;
+        public VeldridVertexBuffer<T> VertexBuffer;
         private VeldridRenderer renderer;
         public VeldridMesh(VeldridRenderer renderer, Assimp.Mesh mesh) : base(mesh)
         {
             this.renderer = renderer;
 
-            TexturedMeshVertex[] vertices = new TexturedMeshVertex[mesh.Vertices.Count];
-            for (int i = 0; i < mesh.Vertices.Count; i++)
-            {
-                vertices[i] = new TexturedMeshVertex(mesh, i);
-            }
-
-            VertexBuffer = new VeldridVertexBuffer<TexturedMeshVertex>(renderer, vertices);
+            T[] vertices = T.FromMesh(mesh);
+            VertexBuffer = new VeldridVertexBuffer<T>(renderer, vertices);
 
             uint[] indices = mesh.GetUnsignedIndices();
 
@@ -48,8 +43,6 @@ namespace osu.Framework.Graphics.Veldrid
             IndexBuffer = new VeldridIndexBuffer(indexBuffer, indices.Length);
 
         }
-
-
         public override void Draw()
         {
             renderer.BindIndexBuffer(IndexBuffer);
