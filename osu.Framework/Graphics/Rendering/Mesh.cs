@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using Assimp;
 using osu.Framework.Logging;
+using osuTK;
 
 namespace osu.Framework.Graphics.Rendering
 {
