@@ -228,7 +228,7 @@ namespace osu.Framework.Graphics.Rendering.Deferred
         protected override IShaderStorageBufferObject<TData> CreateShaderStorageBufferObject<TData>(int uboSize, int ssboSize)
             => new DeferredShaderStorageBufferObject<TData>(this, ssboSize);
 
-        public override Mesh ImportMesh(Assimp.Mesh mesh)
+        public override Mesh ImportMesh(Assimp.Mesh mesh, Model parent)
         {
             throw new NotImplementedException();
         }

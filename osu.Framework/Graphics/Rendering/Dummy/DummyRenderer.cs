@@ -141,7 +141,7 @@ namespace osu.Framework.Graphics.Rendering.Dummy
         public override IFrameBuffer CreateFrameBuffer(RenderBufferFormat[]? renderBufferFormats = null, TextureFilteringMode filteringMode = TextureFilteringMode.Linear)
             => new DummyFrameBuffer(this);
 
-        public override Mesh ImportMesh(Assimp.Mesh mesh)
+        public override Mesh ImportMesh(Assimp.Mesh mesh, Model parent)
         {
             throw new NotImplementedException();
         }

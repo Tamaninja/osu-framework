@@ -486,7 +486,7 @@ namespace osu.Framework.Graphics.OpenGL
 
         protected override IVertexBatch<TVertex> CreateQuadBatch<TVertex>(int size, int maxBuffers) => new GLQuadBatch<TVertex>(this, size, maxBuffers);
 
-        public override Mesh ImportMesh(Assimp.Mesh mesh)
+        public override Mesh ImportMesh(Assimp.Mesh mesh, Model parent)
         {
             throw new NotImplementedException();
         }

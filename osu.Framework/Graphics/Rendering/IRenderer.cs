@@ -436,9 +436,8 @@ namespace osu.Framework.Graphics.Rendering
         /// <returns>An <see cref="IShaderStorageBufferObject{TData}"/>.</returns>
         IShaderStorageBufferObject<TData> CreateShaderStorageBufferObject<TData>(int uboSize, int ssboSize) where TData : unmanaged, IEquatable<TData>;
 
-        Mesh ImportMesh(Assimp.Mesh mesh);
+        Mesh ImportMesh(Assimp.Mesh mesh, Model parent);
 
-        public void DrawMesh(Mesh mesh);
         /// <summary>
         /// Sets the value of a uniform.
         /// </summary>

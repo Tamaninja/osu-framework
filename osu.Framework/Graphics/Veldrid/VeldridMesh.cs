@@ -2,23 +2,14 @@
 // See the LICENCE file in the repository root for full licence text.
 
 using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Runtime.CompilerServices;
-using osu.Framework.Graphics.Colour;
+using NuGet.Protocol.Plugins;
 using osu.Framework.Graphics.OpenGL.Buffers;
+using osu.Framework.Graphics.OpenGL;
 using osu.Framework.Graphics.Rendering;
 using osu.Framework.Graphics.Rendering.Vertices;
 using osu.Framework.Graphics.Veldrid.Buffers;
-using osu.Framework.Graphics.Veldrid.Buffers.Staging;
-using osu.Framework.Graphics.Veldrid.Pipelines;
-using osu.Framework.Graphics.Veldrid.Vertices;
 using osu.Framework.Logging;
-using osu.Framework.Platform;
-using osu.Framework.Statistics;
-using osuTK;
 using Veldrid;
-using Vulkan;
 
 namespace osu.Framework.Graphics.Veldrid
 {
@@ -28,7 +19,7 @@ namespace osu.Framework.Graphics.Veldrid
         public VeldridIndexBuffer IndexBuffer;
         public VeldridVertexBuffer<T> VertexBuffer;
         private VeldridRenderer renderer;
-        public VeldridMesh(VeldridRenderer renderer, Assimp.Mesh mesh) : base(mesh)
+        public VeldridMesh(VeldridRenderer renderer, Assimp.Mesh mesh, Model parent) : base(mesh, parent)
         {
             this.renderer = renderer;
 
@@ -43,14 +34,11 @@ namespace osu.Framework.Graphics.Veldrid
             IndexBuffer = new VeldridIndexBuffer(indexBuffer, indices.Length);
 
         }
-        public override void Draw()
+        protected override void Draw()
         {
             renderer.BindIndexBuffer(IndexBuffer);
             renderer.BindVertexBuffer(VertexBuffer);
             renderer.DrawVertices(Rendering.PrimitiveTopology.Triangles, 0, IndexBuffer.Size);
-
-/*            renderer.DrawMesh(this);
-*/
         }
     }
 }

@@ -1359,12 +1359,7 @@ namespace osu.Framework.Graphics.Rendering
 
         Texture[] IRenderer.GetAllTextures() => allTextures.ToArray();
 
-        public abstract Mesh ImportMesh(Assimp.Mesh mesh);
-
-        public void DrawMesh(Mesh mesh)
-        {
-            throw new NotImplementedException();
-        }
+        public abstract Mesh ImportMesh(Assimp.Mesh mesh, Model parent);
 
         #endregion
 

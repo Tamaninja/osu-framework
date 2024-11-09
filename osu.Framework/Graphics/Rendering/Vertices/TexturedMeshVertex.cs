@@ -15,7 +15,6 @@ namespace osu.Framework.Graphics.Rendering.Vertices
         [VertexMember(3, VertexAttribPointerType.Float)]
         public Vector3D TexturePosition;
 
-
         public bool Equals(TexturedMeshVertex other)
         {
             return Position == other.Position && TexturePosition == other.TexturePosition;
@@ -24,15 +23,32 @@ namespace osu.Framework.Graphics.Rendering.Vertices
         public static TexturedMeshVertex[] FromMesh(Assimp.Mesh mesh)
         {
             TexturedMeshVertex[] vertices = new TexturedMeshVertex[mesh.Vertices.Count];
-            for (int i = 0; i < mesh.Vertices.Count; i++)
-            {
-                vertices[i] = new TexturedMeshVertex()
-                {
-                    Position = mesh.Vertices[i],
 
-                    TexturePosition = mesh.TextureCoordinateChannels[0][i]
-                };
+            if (mesh.HasTextureCoords(0))
+            {
+                for (int i = 0; i < mesh.Vertices.Count; i++)
+                {
+                    vertices[i] = new TexturedMeshVertex()
+                    {
+                        Position = mesh.Vertices[i],
+
+                        TexturePosition = mesh.TextureCoordinateChannels[0][i]
+                    };
+                }
+            } else
+            {
+                for (int i = 0; i < mesh.Vertices.Count; i++)
+                {
+                    vertices[i] = new TexturedMeshVertex()
+                    {
+                        Position = mesh.Vertices[i],
+
+                        TexturePosition = new Vector3D()
+                    };
+                }
             }
+
+
             return (vertices);
         }
     }

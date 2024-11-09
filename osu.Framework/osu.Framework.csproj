@@ -18,6 +18,14 @@
     <PackageReleaseNotes>Automated release.</PackageReleaseNotes>
     <PackageTags>osu game framework</PackageTags>
   </PropertyGroup>
+  <ItemGroup>
+    <Compile Remove="Graphics\Rendering\NewFolder1\**" />
+    <Compile Remove="Graphics\Rendering\NewFolder\**" />
+    <EmbeddedResource Remove="Graphics\Rendering\NewFolder1\**" />
+    <EmbeddedResource Remove="Graphics\Rendering\NewFolder\**" />
+    <None Remove="Graphics\Rendering\NewFolder1\**" />
+    <None Remove="Graphics\Rendering\NewFolder\**" />
+  </ItemGroup>
   <ItemGroup Label="Package References">
     <PackageReference Include="managed-midi" Version="1.10.1" />
     <PackageReference Include="AssimpNet" Version="4.1.0" />
